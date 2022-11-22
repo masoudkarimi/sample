@@ -29,7 +29,7 @@ jobs:
       - name: Change wrapper permission
         run: chmod +x ./gradlew
 
-      - name: Serup Grafle
+      - name: Setup Grafle
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: wrapper #default
