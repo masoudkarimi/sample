@@ -1,0 +1,45 @@
+# Workflow name
+name: Build
+
+on:
+# When it will be triggered
+# Adn in which branch
+  pull_request:
+  push:
+    branches:
+      - main
+
+# Where will they run
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout our repository ###
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up our JDK environment
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      # Change wrapper permission
+      - name: Change wrapper permission
+        run: chmod +x ./gradlew
+
+      - name: Serup Grafle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper #default
+
+      - uses: actions/upload-artifact@v3
+          with:
+            name: Package
+            path: app/build/outputs/apk/release
+
+      - name: Build release version
+        run: ./gradlew assembleRelease
+
+
