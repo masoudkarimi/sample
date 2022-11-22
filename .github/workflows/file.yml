@@ -1,6 +1,6 @@
 # Workflow name
 name: Build
-
+run-name: ${{ github.actor }} is building the application.
 on:
 # When it will be triggered
 # Adn in which branch
