@@ -11,7 +11,7 @@ on:
 
 # Where will they run
 jobs:
-  build:
+  build-release:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,13 +34,53 @@ jobs:
         with:
           gradle-version: wrapper #default
 
+      # Run unit tests
+      - name: Rune Unit Tests
+        run: ./gradlew testDebugUnitTest
+
       - name: Build release version
         run: ./gradlew assembleRelease
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Package
+          name: Release Package
           path: app/build/outputs/apk/release/*.apk
+
+  build-stage:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout our repository ###
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up our JDK environment
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      # Change wrapper permission
+      - name: Change wrapper permission
+        run: chmod +x ./gradlew
+
+      - name: Setup Grafle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: wrapper #default
+
+      # Run unit tests
+      - name: Rune Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Build stage version
+        run: ./gradlew assembleStage
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Stage Package
+          path: app/build/outputs/apk/stage/*.apk
 
 
