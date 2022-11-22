@@ -34,12 +34,13 @@ jobs:
         with:
           gradle-version: wrapper #default
 
-      - uses: actions/upload-artifact@v3
+      - name: Build release version
+        run: ./gradlew assembleRelease
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
         with:
           name: Package
           path: app/build/outputs/apk/release
-
-      - name: Build release version
-        run: ./gradlew assembleRelease
 
 
