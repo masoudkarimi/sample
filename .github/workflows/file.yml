@@ -25,6 +25,13 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore/key.jks'
+          encodedString: ${{ secrets.KEYSTRORE_FILE }}
+
       # Change wrapper permission
       - name: Change wrapper permission
         run: chmod +x ./gradlew
@@ -40,6 +47,10 @@ jobs:
 
       - name: Build release version
         run: ./gradlew assembleRelease
+        env:
+          KEYSTRORE_ALIAS: ${{ secrets.KEYSTRORE_ALIAS }}
+          KEYSTRORE_KEY_PASS: ${{ secrets.KEYSTRORE_KEY_PASS }}
+          KEYSTRORE_ALIAS_PASS: ${{ secrets.KEYSTRORE_ALIAS_PASS }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -61,6 +72,13 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore/key.jks'
+          encodedString: ${{ secrets.KEYSTRORE_FILE }}
+
       # Change wrapper permission
       - name: Change wrapper permission
         run: chmod +x ./gradlew
@@ -76,6 +94,10 @@ jobs:
 
       - name: Build stage version
         run: ./gradlew assembleStage
+        env:
+          KEYSTRORE_ALIAS: ${{ secrets.KEYSTRORE_ALIAS }}
+          KEYSTRORE_KEY_PASS: ${{ secrets.KEYSTRORE_KEY_PASS }}
+          KEYSTRORE_ALIAS_PASS: ${{ secrets.KEYSTRORE_ALIAS_PASS }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

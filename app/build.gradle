@@ -5,12 +5,21 @@ plugins {
 
 android {
     signingConfigs {
-        release {
-            //def keystoreProperties = rootProject.getSignCredentials()
-            keyAlias 'sample-alias'
-            keyPassword '123456789'
-            storeFile rootProject.file("./key/key.jks")
-            storePassword '123456789'
+        config {
+            def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+            def allFilesFromDir = new File(tmpFilePath).listFiles()
+
+            if (allFilesFromDir != null) {
+                def keystoreFile = allFilesFromDir.first()
+                println "key path= $keystoreFile"
+                keystoreFile.renameTo("keystore/key.jks")
+                println "key path2= $keystoreFile"
+            }
+
+            storeFile = file("keystore/key.jks")
+            storePassword System.getenv("KEYSTRORE_ALIAS_PASS")
+            keyAlias System.getenv("KEYSTRORE_ALIAS")
+            keyPassword System.getenv("KEYSTRORE_KEY_PASS")
             v2SigningEnabled true
         }
     }
@@ -44,13 +53,13 @@ android {
             applicationIdSuffix ".stage"
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.config
         }
 
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.config
         }
     }
 
