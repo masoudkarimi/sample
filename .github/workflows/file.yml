@@ -25,12 +25,6 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
-      - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore/key.jks'
-          encodedString: ${{ secrets.KEYSTRORE_FILE }}
 
       # Change wrapper permission
       - name: Change wrapper permission
@@ -47,10 +41,22 @@ jobs:
 
       - name: Build release version
         run: ./gradlew assembleRelease
-        env:
-          KEYSTRORE_ALIAS: ${{ secrets.KEYSTRORE_ALIAS }}
-          KEYSTRORE_KEY_PASS: ${{ secrets.KEYSTRORE_KEY_PASS }}
-          KEYSTRORE_ALIAS_PASS: ${{ secrets.KEYSTRORE_ALIAS_PASS }}
+
+      - name: Sign APK
+        id: sign_apk
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTRORE_FILE }}
+          alias: ${{ secrets.KEYSTRORE_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTRORE_ALIAS_PASS }}
+          keyPassword: ${{ secrets.KEYSTRORE_KEY_PASS }}
+
+      - name: Build Changelog
+        id: changelog
+        uses: ardalanamini/auto-changelog@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -58,51 +64,52 @@ jobs:
           name: Release Package
           path: app/build/outputs/apk/release/*.apk
 
-  build-stage:
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checkout our repository ###
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up our JDK environment
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore/key.jks'
-          encodedString: ${{ secrets.KEYSTRORE_FILE }}
-
-      # Change wrapper permission
-      - name: Change wrapper permission
-        run: chmod +x ./gradlew
-
-      - name: Setup Grafle
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: wrapper #default
-
-      # Run unit tests
-      - name: Rune Unit Tests
-        run: ./gradlew testDebugUnitTest
-
-      - name: Build stage version
-        run: ./gradlew assembleStage
-        env:
-          KEYSTRORE_ALIAS: ${{ secrets.KEYSTRORE_ALIAS }}
-          KEYSTRORE_KEY_PASS: ${{ secrets.KEYSTRORE_KEY_PASS }}
-          KEYSTRORE_ALIAS_PASS: ${{ secrets.KEYSTRORE_ALIAS_PASS }}
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: Stage Package
-          path: app/build/outputs/apk/stage/*.apk
+#  build-stage:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Decode Keystore
+#        id: decode_keystore
+#        uses: timheuer/base64-to-file@v1
+#        with:
+#          fileName: 'keystore/key.jks'
+#          encodedString: ${{ secrets.KEYSTRORE_FILE }}
+#
+#      # Checkout our repository ###
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Set up our JDK environment
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt'
+#
+#
+#      # Change wrapper permission
+#      - name: Change wrapper permission
+#        run: chmod +x ./gradlew
+#
+#      - name: Setup Grafle
+#        uses: gradle/gradle-build-action@v2
+#        with:
+#          gradle-version: wrapper #default
+#
+#      # Run unit tests
+#      - name: Rune Unit Tests
+#        run: ./gradlew testDebugUnitTest
+#
+#      - name: Build stage version
+#        run: ./gradlew assembleStage
+#        env:
+#          KEYSTRORE_ALIAS: ${{ secrets.KEYSTRORE_ALIAS }}
+#          KEYSTRORE_KEY_PASS: ${{ secrets.KEYSTRORE_KEY_PASS }}
+#          KEYSTRORE_ALIAS_PASS: ${{ secrets.KEYSTRORE_ALIAS_PASS }}
+#
+#      - name: Upload artifacts
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: Stage Package
+#          path: app/build/outputs/apk/stage/*.apk
 
 
