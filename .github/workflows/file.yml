@@ -54,9 +54,30 @@ jobs:
 
       - name: Build Changelog
         id: changelog
-        uses: ardalanamini/auto-changelog@v2
+        uses: ardalanamini/auto-changelog@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          commit-types: |
+            breaking: Breaking Changes
+            feat: New Features
+            fix: Bug Fixes
+            revert: Reverts
+            perf: Performance Improvements
+            refactor: Refactors
+            deps: Dependencies
+            docs: Documentation Changes
+            style: Code Style Changes
+            build: Build System
+            ci: Continuous Integration
+            test: Tests
+            chore: Chores
+            other: Other Changes
+          default-commit-type: Other Changes
+          release-name: v1.0.0
+          mention-authors: true
+          mention-new-contributors: true
+          include-compare: true
+          semver: true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
