@@ -52,17 +52,6 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTRORE_ALIAS_PASS }}
           keyPassword: ${{ secrets.KEYSTRORE_KEY_PASS }}
 
-      - name: Build Changelog
-        id: changelog
-        uses: ardalanamini/auto-changelog@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          release-name: v1.0.0
-          mention-authors: true
-          mention-new-contributors: true
-          include-compare: true
-          semver: true
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
