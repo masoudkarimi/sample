@@ -57,22 +57,6 @@ jobs:
         uses: ardalanamini/auto-changelog@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          commit-types: |
-            breaking: Breaking Changes
-            feat: New Features
-            fix: Bug Fixes
-            revert: Reverts
-            perf: Performance Improvements
-            refactor: Refactors
-            deps: Dependencies
-            docs: Documentation Changes
-            style: Code Style Changes
-            build: Build System
-            ci: Continuous Integration
-            test: Tests
-            chore: Chores
-            other: Other Changes
-          default-commit-type: Other Changes
           release-name: v1.0.0
           mention-authors: true
           mention-new-contributors: true
