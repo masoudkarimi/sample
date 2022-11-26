@@ -26,6 +26,7 @@ android {
 
     namespace 'mkn.sample'
     compileSdk 32
+    buildToolsVersion  '32.0.0'
 
     defaultConfig {
         applicationId "mkn.sample"
